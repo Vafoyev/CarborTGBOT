@@ -1,0 +1,97 @@
+// CarBor Database Schema
+// Uzbekiston avtomobil bozori uchun Event-Driven Market Arbitrage System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// ============================================
+// USER - Telegram foydalanuvchilari
+// ============================================
+model User {
+  id         Int      @id @default(autoincrement())
+  telegramId BigInt   @unique
+  firstName  String?
+  lastName   String?
+  username   String?
+  balance    Int      @default(0) // Balans (so'mda yoki USD sentlarda)
+  isPremium  Boolean  @default(false)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Foydalanuvchining filtrlari (bir nechta bo'lishi mumkin)
+  filters Filter[]
+
+  // Yuborilgan bildirishnomalar tarixi
+  notifications Notification[]
+
+  @@map("users")
+}
+
+// ============================================
+// FILTER - Foydalanuvchi qidiruv sozlamalari
+// ============================================
+model Filter {
+  id       Int     @id @default(autoincrement())
+  userId   Int
+  brand    String  // Masalan: "Chevrolet"
+  model    String? // Masalan: "Gentra", "Cobalt"
+  maxPrice Int?    // Maksimal narx (USD)
+  minPrice Int?    // Minimal narx (USD)
+  minYear  Int?    // Minimal yil (masalan: 2020)
+  maxYear  Int?    // Maksimal yil
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("filters")
+}
+
+// ============================================
+// CAR - Scraper topgan mashinalar
+// ============================================
+model Car {
+  id         Int      @id @default(autoincrement())
+  externalId String   @unique // OLX yoki UzAvto'dagi unikal ID
+  source     String   // "olx" | "uzavto" | "avtoelon"
+  title      String
+  brand      String
+  model      String?
+  price      Int      // Narx (USD)
+  year       Int?
+  mileage    Int?     // Yurgan km
+  city       String?  // Shahar
+  url        String   // Asl e'lon linki
+  imageUrl   String?  // Rasm URL
+  phone      String?  // Sotuvchi telefoni
+  createdAt  DateTime @default(now())
+
+  notifications Notification[]
+
+  @@index([brand, model, price])
+  @@index([createdAt])
+  @@map("cars")
+}
+
+// ============================================
+// NOTIFICATION - Yuborilgan bildirishnomalar logi
+// ============================================
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  carId     Int
+  sentAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car  Car  @relation(fields: [carId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, carId]) // Bir mashinani ikki marta yubormaslik
+  @@map("notifications")
+}
