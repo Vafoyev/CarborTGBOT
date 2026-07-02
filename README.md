@@ -4,6 +4,18 @@ O'zbekiston avtomobil bozori uchun **Event-Driven Market Arbitrage System**.
 
 Bot foydalanuvchilarga OLX, Avtoelon va boshqa saytlardan mos mashinalarni real-time topib xabar beradi.
 
+## Hozirgi holat
+
+| Parametr | Qiymat |
+|----------|--------|
+| **Bot** | [@moshintoparbot](https://t.me/moshintoparbot) |
+| **Status** | ✅ Ishlayapti |
+| **Server** | Local (Mac Mini) |
+| **Database** | SQLite (fayl-based) |
+| **Keyingi qadam** | VPS serverga deploy qilish |
+
+> ⚠️ Hozir bot faqat kompyuter yoqiq bo'lganda ishlaydi. Production uchun VPS (Railway/Render/VPS) ga deploy kerak.
+
 ---
 
 ## Arxitektura
@@ -50,60 +62,33 @@ Bot foydalanuvchilarga OLX, Avtoelon va boshqa saytlardan mos mashinalarni real-
 
 ---
 
-## Tez boshlash (Quick Start)
-
-### 1. Telegram Bot Token olish
-
-1. [@BotFather](https://t.me/BotFather) ga boring
-2. `/newbot` buyrug'ini yuboring
-3. Bot nomini kiriting (masalan: `CarBor Uzbekistan`)
-4. Olingan token'ni nusxalang
-
-### 2. .env faylini sozlash
+## Local'da ishga tushirish
 
 ```bash
-cp .env .env.local
-```
+# 1. Node.js o'rnatilgan bo'lishi kerak (v18+)
+# 2. Repo'ni clone qilish
+git clone https://github.com/Vafoyev/CarborTGBOT.git
+cd CarborTGBOT/apps/bot-core
 
-`.env` faylni oching va tokeningizni kiriting:
+# 3. .env faylni yaratish
+cp .env.example .env
+# .env ichiga BOT_TOKEN va BOT_ADMIN_ID yozing
 
-```
-BOT_TOKEN=7123456789:AAHxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-BOT_ADMIN_ID=123456789
-```
-
-> `BOT_ADMIN_ID` ni bilish uchun [@userinfobot](https://t.me/userinfobot) ga yozing.
-
-### 3. Docker orqali ishga tushirish (tavsiya)
-
-```bash
-# PostgreSQL va Redis'ni ishga tushirish
-docker-compose up -d postgres redis
-
-# Kutib turing (5 sek), keyin bot dependency'larni o'rnatish
-cd apps/bot-core
+# 4. Dependencies o'rnatish
 npm install
 
-# Prisma client generatsiya qilish
-npm run db:generate
+# 5. Database tayyorlash
+npx prisma generate
+npx prisma db push
 
-# Database schema'ni push qilish
-npm run db:push
-
-# Botni ishga tushirish
-npm run dev
+# 6. Botni ishga tushirish
+node src/index.js
 ```
 
-### 4. Tekshirish
-
-Telegram'da botingizga boring va `/start` yozing. Siz quyidagini ko'rishingiz kerak:
-
-```
-🚗 CarBor ga xush kelibsiz!
-...
-[➕ Filtr qo'shish] [📋 Filtrlarim]
-[💰 Balans]         [⚙️ Sozlamalar]
-```
+### Telegram'da tekshirish
+1. [@moshintoparbot](https://t.me/moshintoparbot) ga boring
+2. `/start` yozing
+3. Menyu chiqadi — filtr qo'shing va kuting!
 
 ---
 
