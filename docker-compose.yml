@@ -67,6 +67,23 @@ services:
       BOT_ADMIN_ID: ${BOT_ADMIN_ID}
       NODE_ENV: production
 
+  # ============================================
+  # Scraper (Python)
+  # OLX va Avtoelon'dan mashinalarni qidiradi
+  # ============================================
+  scraper:
+    build:
+      context: ./apps/scraper
+      dockerfile: Dockerfile
+    container_name: carbor-scraper
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      REDIS_URL: redis://redis:6379
+      SCRAPE_INTERVAL_SECONDS: 60
+
 volumes:
   postgres_data:
     driver: local
