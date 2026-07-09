@@ -56,7 +56,7 @@ function setupCommands(bot) {
       `Bot OLX, Avtoelon va boshqa saytlarni doimiy kuzatib turadi. ` +
       `Sizning filtrlaringizga mos mashina chiqqanda, bir necha soniya ichida xabar olasiz.\n\n` +
       `*Premium afzalliklari:*\n` +
-      `⭐ 20 tagacha filtr (oddiy: 5 ta)\n` +
+      `⭐ 20 tagacha filtr (oddiy: 2 ta)\n` +
       `⭐ Tezkor bildirishnomalar\n` +
       `⭐ Sotuvchi telefon raqami\n\n` +
       `📩 Savol va takliflar: @carbor_support`;

@@ -18,10 +18,10 @@ const premiumPayScene = new Scenes.WizardScene(
     const paymentInstructions =
       `💳 *Premium Obuna To'lovi*\n\n` +
       `Premium status afzalliklari:\n` +
-      `⭐ 20 tagacha faol filtr (oddiy foydalanuvchida 5 ta)\n` +
+      `⭐ 20 tagacha faol filtr (bepul foydalanuvchida 2 ta)\n` +
       `⭐ Yangi e'lonlar haqida eng tezkor bildirishnomalar\n` +
       `⭐ Sotuvchilarning telefon raqamlari\n\n` +
-      `💵 Obuna narxi: *50,000 so'm / oy*\n\n` +
+      `💵 Obuna narxi: *15,999 so'm / oy*\n\n` +
       `To'lovni amalga oshirish uchun karta ma'lumotlari:\n` +
       `📌 Karta: *8600 1402 3456 7890*\n` +
       `👤 Ega: *ISOBEK VAFOYEV*\n` +

@@ -24,8 +24,8 @@ const config = {
 
   // Ilova sozlamalari
   app: {
-    maxFiltersPerUser: 5,        // Oddiy foydalanuvchi uchun
-    maxFiltersPremium: 20,       // Premium foydalanuvchi uchun
+    maxFiltersPerUser: 2,        // Bepul foydalanuvchi uchun (2 ta)
+    maxFiltersPremium: 20,       // Premium foydalanuvchi uchun (20 ta)
     matchingIntervalMs: 30000,   // Har 30 sekundda matching tekshiruvi
   },
 };
