@@ -18,4 +18,4 @@ RUN npx prisma generate
 COPY src ./src
 
 # Start
-CMD ["sh", "-c", "npx prisma db push && node src/index.js"]
+CMD ["sh", "-c", "npx prisma db push --skip-generate && node src/index.js"]
