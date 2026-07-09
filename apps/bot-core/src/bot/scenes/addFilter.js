@@ -296,7 +296,6 @@ addFilterScene.command('cancel', async (ctx) => {
 
 // Asosiy menyu tugmalari bosilganda sahnadan chiqish
 const mainButtons = [
-  '➕ Filtr qo\'shish',
   '📋 Filtrlarim',
   '💰 Balans',
   '⚙️ Sozlamalar',
