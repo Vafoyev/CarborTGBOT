@@ -80,8 +80,20 @@ bot.hears('📋 Filtrlarim', async (ctx) => {
 });
 
 // "Filtr qo'shish" tugmasi bosilganda
-bot.hears('➕ Filtr qo\'shish', (ctx) => {
-  ctx.scene.enter('add-filter');
+bot.hears('➕ Filtr qo\'shish', async (ctx) => {
+  console.log(`👉 hears("➕ Filtr qo'shish") tugmasi bosildi. User: ${ctx.from.id}`);
+  try {
+    if (!ctx.scene) {
+      console.error('❌ ctx.scene mavjud emas! Stage middleware to\'g\'ri ishlamayapti.');
+      return ctx.reply('❌ Sahna menejeri topilmadi. Iltimos qaytadan /start yuboring.');
+    }
+    console.log('👉 add-filter sahnasiga kirish boshlanmoqda...');
+    await ctx.scene.enter('add-filter');
+    console.log('👉 add-filter sahnasiga muvaffaqiyatli kirildi.');
+  } catch (error) {
+    console.error('❌ sahnaga kirishda xatolik:', error);
+    await ctx.reply('❌ Sahna yaratishda xatolik yuz berdi: ' + error.message);
+  }
 });
 
 // "💰 Balans" tugmasi
