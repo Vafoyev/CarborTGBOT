@@ -31,6 +31,14 @@ const { premiumPayScene } = require('./bot/scenes/premiumPay');
 const stage = new Scenes.Stage([addFilterScene, premiumPayScene]);
 bot.use(stage.middleware());
 
+// Xabarlarni konsolga chiqarish (debugging uchun)
+bot.use(async (ctx, next) => {
+  if (ctx.message) {
+    console.log(`📩 [Xabar] Kimdan: ${ctx.from.id} (@${ctx.from.username || 'yo\'q'}), Matn: "${ctx.message.text || ''}"`);
+  }
+  return next();
+});
+
 // ============================================
 // COMMANDS & HANDLERS
 // ============================================

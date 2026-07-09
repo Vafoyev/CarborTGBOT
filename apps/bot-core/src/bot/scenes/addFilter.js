@@ -39,37 +39,48 @@ const addFilterScene = new Scenes.WizardScene(
   // QADAM 1: Brand tanlash
   // ============================================
   async (ctx) => {
-    // Filtr limitini tekshirish
-    const count = await getFilterCount(ctx.from.id);
-    const maxFilters = config.app.maxFiltersPerUser;
+    console.log(`🎬 [add-filter] Qadam 1 boshlandi. User: ${ctx.from.id}`);
+    try {
+      // Filtr limitini tekshirish
+      const count = await getFilterCount(ctx.from.id);
+      const maxFilters = config.app.maxFiltersPerUser;
+      console.log(`🎬 [add-filter] Limit tekshiruvi: count=${count}, maxFilters=${maxFilters}`);
 
-    if (count >= maxFilters) {
+      if (count >= maxFilters) {
+        console.log(`🎬 [add-filter] Limit to'lgan. Sahna tark etilmoqda.`);
+        await ctx.reply(
+          `⚠️ Siz maksimal ${maxFilters} ta filtr qo'shgansiz.\n\n` +
+            `Premium obuna bo'lsangiz ${config.app.maxFiltersPremium} tagacha filtr qo'shishingiz mumkin!\n` +
+            `/premium — batafsil ma'lumot`,
+          mainKeyboard,
+        );
+        return ctx.scene.leave();
+      }
+
+      // Brand tanlash tugmalari
+      const brandButtons = [];
+      for (let i = 0; i < POPULAR_BRANDS.length; i += 3) {
+        brandButtons.push(POPULAR_BRANDS.slice(i, i + 3));
+      }
+      brandButtons.push(['⬅️ Bekor qilish']);
+
+      console.log(`🎬 [add-filter] Tugmalar tayyorlandi, javob yuborilmoqda.`);
       await ctx.reply(
-        `⚠️ Siz maksimal ${maxFilters} ta filtr qo'shgansiz.\n\n` +
-          `Premium obuna bo'lsangiz ${config.app.maxFiltersPremium} tagacha filtr qo'shishingiz mumkin!\n` +
-          `/premium — batafsil ma'lumot`,
-        mainKeyboard,
+        '🚗 *1-Qadam: Avtomobil brendini tanlang*\n\n' +
+          'Pastdagi tugmalardan birini tanlang yoki o\'zingiz yozing:',
+        {
+          parse_mode: 'Markdown',
+          ...Markup.keyboard(brandButtons).resize().oneTime(),
+        },
       );
+
+      console.log(`🎬 [add-filter] Keyingi qadamga o'tildi.`);
+      return ctx.wizard.next();
+    } catch (err) {
+      console.error('❌ [add-filter] Qadam 1 xatolik:', err);
+      await ctx.reply('❌ Xatolik yuz berdi. Qaytadan urinib ko\'ring.', mainKeyboard);
       return ctx.scene.leave();
     }
-
-    // Brand tanlash tugmalari
-    const brandButtons = [];
-    for (let i = 0; i < POPULAR_BRANDS.length; i += 3) {
-      brandButtons.push(POPULAR_BRANDS.slice(i, i + 3));
-    }
-    brandButtons.push(['⬅️ Bekor qilish']);
-
-    await ctx.reply(
-      '🚗 *1-Qadam: Avtomobil brendini tanlang*\n\n' +
-        'Pastdagi tugmalardan birini tanlang yoki o\'zingiz yozing:',
-      {
-        parse_mode: 'Markdown',
-        ...Markup.keyboard(brandButtons).resize().oneTime(),
-      },
-    );
-
-    return ctx.wizard.next();
   },
 
   // ============================================
