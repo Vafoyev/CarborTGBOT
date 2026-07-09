@@ -26,8 +26,9 @@ const bot = new Telegraf(config.bot.token);
 // Session (scene wizard uchun kerak)
 bot.use(session());
 
-// Scene manager (Add Filter wizard)
-const stage = new Scenes.Stage([addFilterScene]);
+// Scene manager (Add Filter va Premium Pay wizardlari)
+const { premiumPayScene } = require('./bot/scenes/premiumPay');
+const stage = new Scenes.Stage([addFilterScene, premiumPayScene]);
 bot.use(stage.middleware());
 
 // ============================================
@@ -107,6 +108,87 @@ bot.hears('⚙️ Sozlamalar', async (ctx) => {
   );
 });
 
+// Premium buyrug'i (to'lov sahnasiga o'tadi)
+bot.command('premium', (ctx) => {
+  ctx.scene.enter('premium-pay');
+});
+
+bot.hears('💳 Obuna bo\'lish', (ctx) => {
+  ctx.scene.enter('premium-pay');
+});
+
+// ============================================
+// ADMIN PREMIUM PAYMENTS VERIFICATION
+// ============================================
+bot.action(/^admin_approve_pay:(.+)$/, async (ctx) => {
+  const { setPremiumStatus } = require('./services/user.service');
+  try {
+    // Faqat admin bosishi kerak
+    if (ctx.from.id.toString() !== config.bot.adminId.toString()) {
+      return ctx.answerCbQuery('⚠️ Bu amal faqat admin uchun ruxsat etilgan!');
+    }
+
+    const userIdToApprove = ctx.match[1];
+    
+    // Statusni yangilash
+    await setPremiumStatus(userIdToApprove, true);
+
+    // Foydalanuvchini xabardor qilish
+    await ctx.telegram.sendMessage(
+      userIdToApprove,
+      `🎉 *Tabriklaymiz!* Siz yuborgan to'lov cheki tasdiqlandi.\n` +
+        `⭐ *Premium* obuna muvaffaqiyatli faollashtirildi! 🚀\n\n` +
+        `Endi siz 20 tagacha faol filtr qo'shishingiz mumkin. Rahmat!`,
+      { parse_mode: 'Markdown' }
+    );
+
+    // Adminga bildirish (tugmalarni o'chirib yuboramiz)
+    await ctx.editMessageCaption(
+      (ctx.callbackQuery.message.caption || '') + 
+      `\n\n✅ *TASDIQLANDI* (Admin: ${ctx.from.first_name})`,
+      { parse_mode: 'Markdown' }
+    );
+
+    await ctx.answerCbQuery('✅ Premium faollashtirildi!');
+  } catch (error) {
+    console.error('Premium tasdiqlashda xatolik:', error);
+    await ctx.answerCbQuery('❌ Xatolik yuz berdi!');
+  }
+});
+
+bot.action(/^admin_reject_pay:(.+)$/, async (ctx) => {
+  try {
+    // Faqat admin bosishi kerak
+    if (ctx.from.id.toString() !== config.bot.adminId.toString()) {
+      return ctx.answerCbQuery('⚠️ Bu amal faqat admin uchun ruxsat etilgan!');
+    }
+
+    const userIdToReject = ctx.match[1];
+
+    // Foydalanuvchini xabardor qilish
+    await ctx.telegram.sendMessage(
+      userIdToReject,
+      `❌ *To'lov cheki rad etildi.*\n\n` +
+        `Siz yuborgan screenshot tasdiqlanmadi. Iltimos to'lovni qaytadan tekshirib, chekni to'g'ri yuboring.\n` +
+        `Savollar bo'lsa: @carbor_support`,
+      { parse_mode: 'Markdown' }
+    );
+
+    // Adminga bildirish
+    await ctx.editMessageCaption(
+      (ctx.callbackQuery.message.caption || '') + 
+      `\n\n❌ *RAD ETILDI* (Admin: ${ctx.from.first_name})`,
+      { parse_mode: 'Markdown' }
+    );
+
+    await ctx.answerCbQuery('❌ To\'lov rad etildi!');
+  } catch (error) {
+    console.error('Premium rad etishda xatolik:', error);
+    await ctx.answerCbQuery('❌ Xatolik yuz berdi!');
+  }
+});
+
+
 // ============================================
 // ERROR HANDLING
 // ============================================
@@ -126,9 +208,9 @@ async function launch() {
     await prisma.$connect();
     console.log('✅ PostgreSQL ulandi');
 
-    // Redis listener (Scraper qo'shilganda yoqiladi)
-    // setupRedisListener(bot);
-    console.log('ℹ️  Redis listener o\'chirilgan (scraper keyinroq qo\'shiladi)');
+    // Redis listener (Scraper topgan yangi mashinalarni qabul qilish uchun)
+    setupRedisListener(bot);
+    console.log('📡 Redis listener faollashtirildi!');
 
     // Botni ishga tushirish
     console.log('⏳ Telegram API ga ulanilmoqda...');

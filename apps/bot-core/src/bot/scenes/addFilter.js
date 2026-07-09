@@ -283,4 +283,29 @@ addFilterScene.command('cancel', async (ctx) => {
   return ctx.scene.leave();
 });
 
+// Asosiy menyu tugmalari bosilganda sahnadan chiqish
+const mainButtons = [
+  '➕ Filtr qo\'shish',
+  '📋 Filtrlarim',
+  '💰 Balans',
+  '⚙️ Sozlamalar',
+  '⬅️ Bekor qilish'
+];
+mainButtons.forEach((button) => {
+  addFilterScene.hears(button, async (ctx, next) => {
+    await ctx.scene.leave();
+    return next(); // outer handlers match the hears
+  });
+});
+
+// Asosiy komandalar yozilganda sahnadan chiqish
+const commands = ['start', 'help', 'myfilters', 'deletefilters'];
+commands.forEach((cmd) => {
+  addFilterScene.command(cmd, async (ctx, next) => {
+    await ctx.scene.leave();
+    return next(); // outer handlers match the command
+  });
+});
+
 module.exports = { addFilterScene };
+
