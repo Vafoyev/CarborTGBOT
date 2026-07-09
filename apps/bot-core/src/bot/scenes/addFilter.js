@@ -304,6 +304,9 @@ const mainButtons = [
 mainButtons.forEach((button) => {
   addFilterScene.hears(button, async (ctx, next) => {
     await ctx.scene.leave();
+    if (button === '⬅️ Bekor qilish') {
+      return ctx.reply('❌ Filtr qo\'shish bekor qilindi.', mainKeyboard);
+    }
     return next(); // outer handlers match the hears
   });
 });

@@ -116,6 +116,9 @@ const mainButtons = [
 mainButtons.forEach((button) => {
   premiumPayScene.hears(button, async (ctx, next) => {
     await ctx.scene.leave();
+    if (button === '⬅️ Bekor qilish') {
+      return ctx.reply('❌ To\'lov bekor qilindi.', mainKeyboard);
+    }
     return next();
   });
 });
