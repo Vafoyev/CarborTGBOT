@@ -66,6 +66,8 @@ services:
       REDIS_URL: redis://redis:6379
       BOT_ADMIN_ID: ${BOT_ADMIN_ID}
       NODE_ENV: production
+    volumes:
+      - bot_data:/app/prisma
 
   # ============================================
   # Scraper (Python)
@@ -88,4 +90,6 @@ volumes:
   postgres_data:
     driver: local
   redis_data:
+    driver: local
+  bot_data:
     driver: local
